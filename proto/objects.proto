@@ -1,0 +1,61 @@
+syntax = "proto3";
+
+import "google/protobuf/any.proto";
+
+package objects;
+
+option go_package = "./go";
+
+enum TypeKind {
+  INVALID = 0;
+  STRING = 1;
+  NUMBER = 2;
+  BOOLEAN = 3;
+  OBJECT = 4;
+  ARRAY = 5;
+  DYNAMIC = 6;
+}
+
+message Type {
+  TypeKind name = 1;
+
+  oneof ElementType {
+    ObjectType object = 2;
+    ArrayType array = 3;
+  }
+}
+
+message ObjectType {
+  map<string, Type> fields = 1;
+}
+
+message ArrayType {
+  Type element = 1;
+}
+
+message Value {
+  Type type = 1;
+
+  oneof value {
+    StringValue string_value = 2;
+    ObjectValue object_value = 3;
+    ArrayValue array_value = 4;
+    DynamicValue dynamic_value = 5;
+  }
+}
+
+message StringValue {
+  string value = 1;
+}
+
+message ObjectValue {
+  map<string, Value> fields = 1;
+}
+
+message ArrayValue {
+  repeated Value elements = 1;
+}
+
+message DynamicValue {
+  google.protobuf.Any value = 1;
+}
